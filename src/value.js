@@ -30,8 +30,6 @@ var reductio_value = {
       properties.forEach(function(prop) {
         if (!path(p)[prop]) {
           path(p)[prop] = reduceInitial();
-
-          console.log('initialValue for prop', path(p)[prop]);
         }
         if (prior) prior(path(p)[prop], v, nf);
       });
