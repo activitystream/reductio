@@ -1,23 +1,22 @@
 var reductio_count = {
-	add: function(prior, path, propName) {
+	add: function (a, prior, path) {
 		return function (p, v, nf) {
 			if(prior) prior(p, v, nf);
-			path(p)[propName]++;
+			path(p).count = path(p).count + a(v);
 			return p;
 		};
 	},
-	remove: function(prior, path, propName) {
+	remove: function (a, prior, path) {
 		return function (p, v, nf) {
 			if(prior) prior(p, v, nf);
-			path(p)[propName]--;
+			path(p).count = path(p).count - a(v);
 			return p;
 		};
 	},
-	initial: function(prior, path, propName) {
+	initial: function (prior, path) {
 		return function (p) {
-			if(prior) p = prior(p);
-			// if(p === undefined) p = {};
-			path(p)[propName] = 0;
+			p = prior(p);
+			path(p).count = 0;
 			return p;
 		};
 	}

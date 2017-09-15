@@ -4,12 +4,12 @@ describe('Reductio count', function () {
 
     beforeEach(function () {
         var data = crossfilter([
-            { foo: 'one' },
-            { foo: 'two' },
-            { foo: 'three' },
-            { foo: 'one' },
-            { foo: 'one' },
-            { foo: 'two' },
+            { foo: 'one', count: 1 },
+            { foo: 'two', count: 2 },
+            { foo: 'three', count: 3 },
+            { foo: 'one', count: 4 },
+            { foo: 'one', count: 5 },
+            { foo: 'two', count: 6 },
         ]);
 
         var dim = data.dimension(function(d) { return d.foo; });
@@ -35,10 +35,16 @@ describe('Reductio count', function () {
         expect(values['two'].count).toEqual(2);
         expect(values['three'].count).toEqual(1);
     });
-    
-    it('has a user-defined property name', function() {
-      reductio().count(true, 'otherCount')(group);
-      expect(group.top(1)[0].value.otherCount).toEqual(3);
-      expect(group.top(1)[0].value.count).toEqual(undefined);
+
+    it('has can function precisely like sum', function() {
+      reductio().count('count')(group);
+      var values = {};
+      group.top(Infinity).forEach(function (d) {
+          values[d.key] = d.value;
+      });
+
+      expect(values['one'].count).toBe(10);
+      expect(values['two'].count).toBe(8);
+      expect(values['three'].count).toBe(3);
     })
 });

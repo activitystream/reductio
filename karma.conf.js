@@ -12,10 +12,10 @@ module.exports = function(config) {
     ],
 
 	browsers: [
-		// 'Chrome'
+		'Chrome'
 		// 'ChromeCanary',
 		// 'Firefox',
-		'PhantomJS'
+		// 'PhantomJS'
 		// 'PhantomJS'
 	],
 

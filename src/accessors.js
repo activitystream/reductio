@@ -60,12 +60,15 @@ function accessor_build(obj, p) {
 		return p;
 	};
 
-	obj.count = function(value, propName) {
+	obj.count = function(value) {
 		if (!arguments.length) return p.count;
-    if (!propName) {
-      propName = 'count';
-    }
-		p.count = propName;
+		if (value === true) {
+			p.count = function(){ return 1; };
+		} else if (value) {
+			p.count = accessorifyNumeric(value);
+		} else {
+			p.count = false;
+		}
 		return obj;
 	};
 
@@ -88,7 +91,7 @@ function accessor_build(obj, p) {
 			if(p.sum && p.sum !== value) console.warn('SUM aggregation is being overwritten by AVG aggregation');
 			p.sum = value;
 			p.avg = true;
-			p.count = 'count';
+			obj.count(true);
 		} else {
 			p.avg = value;
 		}
@@ -205,7 +208,7 @@ function accessor_build(obj, p) {
 		if(typeof(value) === 'function') {
 			p.sumOfSquares = value;
 			p.sum = value;
-			p.count = 'count';
+			obj.count(true);
 			p.std = true;
 		} else {
 			p.std = value;

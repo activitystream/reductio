@@ -33,9 +33,9 @@ function build_function(p, f, path) {
 	};
 
 	if(p.count || p.std) {
-    f.reduceAdd = reductio_count.add(f.reduceAdd, path, p.count);
-    f.reduceRemove = reductio_count.remove(f.reduceRemove, path, p.count);
-    f.reduceInitial = reductio_count.initial(f.reduceInitial, path, p.count);
+    f.reduceAdd = reductio_count.add(p.count, f.reduceAdd, path);
+    f.reduceRemove = reductio_count.remove(p.count, f.reduceRemove, path);
+    f.reduceInitial = reductio_count.initial(f.reduceInitial, path);
 	}
 
 	if(p.sum) {

@@ -158,6 +158,13 @@ reducer(group);
 
 Stored under the 'count' property of groups. The value will be a count of every record that matches the group accessor.
 
+If you have pre aggregated data you can use count like sum.
+
+```js
+reducer = reductio().count('items');
+reducer(group);
+```
+
 <h3 id="aggregations-standard-aggregations-reductio-b-sum-b-i-value-i-">reductio.<b>sum</b>(<i>value</i>)</h3>
 Works the same was as Crossfilter's standard ```group.reduceSum()```.
 
