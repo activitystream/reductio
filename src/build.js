@@ -17,6 +17,7 @@ var reductio_alias = require('./alias.js');
 var reductio_alias_prop = require('./aliasProp.js');
 var reductio_data_list = require('./data-list.js');
 var reductio_custom = require('./custom.js');
+var reductio_value = require('./value.js');
 
 function build_function(p, f, path) {
 	// We have to build these functions in order. Eventually we can include dependency
@@ -188,6 +189,16 @@ function build_function(p, f, path) {
 			f.reduceInitial = setupPath(f.reduceInitial);
 			build_function(p.values[n].parameters, f, function (p) { return p[n]; });
 		});
+	}
+
+	if (p.multi_value) {
+		f.reduceAdd = reductio_value.multi_add(p.value, f.reduceAdd, path, f.reduceInitial );
+		f.reduceRemove = reductio_value.multi_remove(p.value, f.reduceRemove, path);
+		f.reduceInitial = reductio_value.multi_initial(f.reduceInitial, path);
+	} else if (p.value) {
+		f.reduceAdd = reductio_value.add(p.value, f.reduceAdd, path, f.reduceInitial);
+		f.reduceRemove = reductio_value.remove(p.value, f.reduceRemove, path);
+		f.reduceInitial = reductio_value.initial(f.reduceInitial, path);
 	}
 }
 

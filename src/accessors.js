@@ -226,9 +226,15 @@ function accessor_build(obj, p) {
 	};
 
 	obj.value = function(value, accessor) {
-		if (!arguments.length || typeof value !== 'string' ) {
-			console.error("'value' requires a string argument.");
-		} else {
+		if (!arguments.length) {
+			console.error("'value' requires an argument");
+		} else if (typeof value === 'function') {
+			p.value = value;
+			if (accessor === true) {
+				p.multi_value = true;
+			}
+			return obj;
+		} else if (typeof value === 'string') {
 			if(!p.values) p.values = {};
 			p.values[value] = {};
 			p.values[value].parameters = reductio_parameters();

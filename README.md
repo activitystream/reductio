@@ -275,6 +275,36 @@ Will result in groups that look like
 }}
 ```
 
+Value can also take a function as its argument in which case the keys are created dynamically.
+Consider this data
+```json
+[{
+  "category": "Sport",
+  "count": 5
+},
+{
+  "category": "Other",
+  "count": 2
+}]
+```
+
+you could use reductio.value like so
+
+```js
+group = reductio().value(d => d.category).sum(d => c.count)(dimension.groupAll());
+
+group.value(); // {"Sport": {"sum": 5}, "Other": {"sum": "2"}}
+```
+
+If each item belongs in multiple categories you can mark it by passing true with your value function.
+
+```js
+// data is of the form {categories: string[], sold: number, revenue: number}
+group = reductio().value(d => d.categories, true).count(d => d.sold).sum(d => d.revenue).avg(true)(dimension.groupAll());
+
+group.value(); // {"Football": {... avg: 320}, {"12 man game": {... avg: 500}}}
+```
+
 <h3 id="aggregations-standard-aggregations-reductio-b-filter-b-i-filterfn-i-">reductio.<b>filter</b>(<i>filterFn</i>)</h3>
 ```javascript
 reductio().filter(filterFn)(group)

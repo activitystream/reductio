@@ -90,4 +90,70 @@ describe('Multiple values', function () {
         expect(Math.round(vals['two'].avg)).toEqual(Math.round(4/2));
         expect(Math.round(vals['three'].avg)).toEqual(Math.round(4/1));
     });
+
+    it('can take a function to create keys dynamically', function() {
+      var data = crossfilter([
+          { foo: 'one', x: 1, other: 2 },
+          { foo: 'two', x: 2, other: 1 },
+          { foo: 'three', x: 3, other: 4 },
+          { foo: 'one', x: 4, other: 1 },
+          { foo: 'one', x: 5, other: 2 },
+          { foo: 'two', x: 6, other: 3 },
+      ]);
+
+      var dim = data.dimension(function(){return 'all';});
+
+      var group = reductio()
+        .count('x')
+        .sum('other')
+        .avg(true)
+        .value(function(d){
+          return d.foo;
+        })(dim.groupAll());
+
+        expect(group.value().one.count).toBe(10);
+        expect(group.value().one.sum).toBe(5);
+        expect(group.value().one.avg).toBe(0.5);
+
+        expect(group.value().two.count).toBe(8);
+        expect(group.value().two.sum).toBe(4);
+        expect(group.value().two.avg).toBe(0.5);
+
+        expect(group.value().three.count).toBe(3);
+        expect(group.value().three.sum).toBe(4);
+        expect(group.value().three.avg).toBe(4/3);
+    });
+
+    it('they keys function can be marked as multi in which case the aggregation is run once for every key in the array returned', function() {
+      var data = crossfilter([
+          { foo: ['one', 'two'], x: 1, other: 2 },
+          { foo: ['two', 'three'], x: 2, other: 1 },
+          { foo: ['three'], x: 3, other: 4 },
+          { foo: ['one'], x: 4, other: 1 },
+          { foo: ['one', 'two'], x: 5, other: 2 },
+          { foo: ['two'], x: 6, other: 3 },
+      ]);
+
+      var dim = data.dimension(function(){return 'all';});
+
+      var group = reductio()
+        .count('x')
+        .sum('other')
+        .avg(true)
+        .value(function(d){
+          return d.foo;
+        }, true)(dim.groupAll());
+
+        expect(group.value().one.count).toBe(10);
+        expect(group.value().one.sum).toBe(5);
+        expect(group.value().one.avg).toBe(0.5);
+
+        expect(group.value().two.count).toBe(14);
+        expect(group.value().two.sum).toBe(8);
+        expect(group.value().two.avg).toBe(8/14);
+
+        expect(group.value().three.count).toBe(5);
+        expect(group.value().three.sum).toBe(5);
+        expect(group.value().three.avg).toBe(1);
+    });
 });

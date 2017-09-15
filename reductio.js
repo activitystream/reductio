@@ -151,12 +151,15 @@ function accessor_build(obj, p) {
 		return p;
 	};
 
-	obj.count = function(value, propName) {
+	obj.count = function(value) {
 		if (!arguments.length) return p.count;
-    if (!propName) {
-      propName = 'count';
-    }
-		p.count = propName;
+		if (value === true) {
+			p.count = function(){ return 1; };
+		} else if (value) {
+			p.count = accessorifyNumeric(value);
+		} else {
+			p.count = false;
+		}
 		return obj;
 	};
 
@@ -179,7 +182,7 @@ function accessor_build(obj, p) {
 			if(p.sum && p.sum !== value) console.warn('SUM aggregation is being overwritten by AVG aggregation');
 			p.sum = value;
 			p.avg = true;
-			p.count = 'count';
+			obj.count(true);
 		} else {
 			p.avg = value;
 		}
@@ -296,7 +299,7 @@ function accessor_build(obj, p) {
 		if(typeof(value) === 'function') {
 			p.sumOfSquares = value;
 			p.sum = value;
-			p.count = 'count';
+			obj.count(true);
 			p.std = true;
 		} else {
 			p.std = value;
@@ -314,9 +317,15 @@ function accessor_build(obj, p) {
 	};
 
 	obj.value = function(value, accessor) {
-		if (!arguments.length || typeof value !== 'string' ) {
-			console.error("'value' requires a string argument.");
-		} else {
+		if (!arguments.length) {
+			console.error("'value' requires an argument");
+		} else if (typeof value === 'function') {
+			p.value = value;
+			if (accessor === true) {
+				p.multi_value = true;
+			}
+			return obj;
+		} else if (typeof value === 'string') {
 			if(!p.values) p.values = {};
 			p.values[value] = {};
 			p.values[value].parameters = reductio_parameters();
@@ -460,6 +469,7 @@ var reductio_alias = require('./alias.js');
 var reductio_alias_prop = require('./aliasProp.js');
 var reductio_data_list = require('./data-list.js');
 var reductio_custom = require('./custom.js');
+var reductio_value = require('./value.js');
 
 function build_function(p, f, path) {
 	// We have to build these functions in order. Eventually we can include dependency
@@ -476,9 +486,9 @@ function build_function(p, f, path) {
 	};
 
 	if(p.count || p.std) {
-    f.reduceAdd = reductio_count.add(f.reduceAdd, path, p.count);
-    f.reduceRemove = reductio_count.remove(f.reduceRemove, path, p.count);
-    f.reduceInitial = reductio_count.initial(f.reduceInitial, path, p.count);
+    f.reduceAdd = reductio_count.add(p.count, f.reduceAdd, path);
+    f.reduceRemove = reductio_count.remove(p.count, f.reduceRemove, path);
+    f.reduceInitial = reductio_count.initial(f.reduceInitial, path);
 	}
 
 	if(p.sum) {
@@ -632,6 +642,16 @@ function build_function(p, f, path) {
 			build_function(p.values[n].parameters, f, function (p) { return p[n]; });
 		});
 	}
+
+	if (p.multi_value) {
+		f.reduceAdd = reductio_value.multi_add(p.value, f.reduceAdd, path, f.reduceInitial );
+		f.reduceRemove = reductio_value.multi_remove(p.value, f.reduceRemove, path);
+		f.reduceInitial = reductio_value.multi_initial(f.reduceInitial, path);
+	} else if (p.value) {
+		f.reduceAdd = reductio_value.add(p.value, f.reduceAdd, path, f.reduceInitial);
+		f.reduceRemove = reductio_value.remove(p.value, f.reduceRemove, path);
+		f.reduceInitial = reductio_value.initial(f.reduceInitial, path);
+	}
 }
 
 var reductio_build = {
@@ -640,7 +660,7 @@ var reductio_build = {
 
 module.exports = reductio_build;
 
-},{"./alias.js":3,"./aliasProp.js":4,"./avg.js":5,"./count.js":8,"./custom.js":9,"./data-list.js":10,"./exception-count.js":11,"./exception-sum.js":12,"./filter.js":13,"./histogram.js":14,"./max.js":15,"./median.js":16,"./min.js":17,"./nest.js":18,"./std.js":23,"./sum-of-squares.js":24,"./sum.js":25,"./value-count.js":26,"./value-list.js":27}],7:[function(require,module,exports){
+},{"./alias.js":3,"./aliasProp.js":4,"./avg.js":5,"./count.js":8,"./custom.js":9,"./data-list.js":10,"./exception-count.js":11,"./exception-sum.js":12,"./filter.js":13,"./histogram.js":14,"./max.js":15,"./median.js":16,"./min.js":17,"./nest.js":18,"./std.js":23,"./sum-of-squares.js":24,"./sum.js":25,"./value-count.js":26,"./value-list.js":27,"./value.js":28}],7:[function(require,module,exports){
 var pluck = function(n){
     return function(d){
         return d[n];
@@ -648,7 +668,7 @@ var pluck = function(n){
 };
 
 // supported operators are sum, avg, and count
-_grouper = function(path, prior){
+var _grouper = function(path, prior){
     if(!path) path = function(d){return d;};
     return function(p, v){
         if(prior) prior(p, v);
@@ -660,7 +680,7 @@ _grouper = function(path, prior){
     };
 };
 
-reductio_cap = function (prior, f, p) {
+var reductio_cap = function (prior, f, p) {
     var obj = f.reduceInitial();
     // we want to support values so we'll need to know what those are
     var values = p.values ? Object.keys(p.values) : [];
@@ -691,31 +711,31 @@ module.exports = reductio_cap;
 
 },{}],8:[function(require,module,exports){
 var reductio_count = {
-	add: function(prior, path, propName) {
+	add: function (a, prior, path) {
 		return function (p, v, nf) {
 			if(prior) prior(p, v, nf);
-			path(p)[propName]++;
+			path(p).count = path(p).count + a(v);
 			return p;
 		};
 	},
-	remove: function(prior, path, propName) {
+	remove: function (a, prior, path) {
 		return function (p, v, nf) {
 			if(prior) prior(p, v, nf);
-			path(p)[propName]--;
+			path(p).count = path(p).count - a(v);
 			return p;
 		};
 	},
-	initial: function(prior, path, propName) {
+	initial: function (prior, path) {
 		return function (p) {
-			if(prior) p = prior(p);
-			// if(p === undefined) p = {};
-			path(p)[propName] = 0;
+			p = prior(p);
+			path(p).count = 0;
 			return p;
 		};
 	}
 };
 
 module.exports = reductio_count;
+
 },{}],9:[function(require,module,exports){
 var reductio_custom = {
 	add: function(prior, path, addFn) {
@@ -1387,5 +1407,66 @@ var reductio_value_list = {
 
 module.exports = reductio_value_list;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],28:[function(require,module,exports){
+var reductio_value = {
+	add: function (a, prior, path, reduceInitial) {
+		return function (p, v, nf) {
+      var property = a(v);
+      if (!path(p)[property]) path(p)[property] = reduceInitial();
+      if (prior) {
+        prior(path(p)[property], v, nf);
+      }
+			return p;
+		};
+	},
+	remove: function (a, prior, path) {
+		return function (p, v, nf) {
+      var property = a(v);
+      if (prior) {
+        prior(path(p)[property], v, nf);
+      }
+			return p;
+		};
+	},
+	initial: function (prior, path) {
+		return function (p) {
+			return {};
+		};
+	},
+
+  multi_add: function (a, prior, path, reduceInitial) {
+		return function (p, v, nf) {
+      var properties = a(v);
+      properties.forEach(function(prop) {
+        if (!path(p)[prop]) {
+          path(p)[prop] = reduceInitial();
+
+          console.log('initialValue for prop', path(p)[prop]);
+        }
+        if (prior) prior(path(p)[prop], v, nf);
+      });
+
+      return p;
+		};
+	},
+	multi_remove: function (a, prior, path) {
+		return function (p, v, nf) {
+      var properties = a(v);
+      properties.forEach(function(prop) {
+        if (prior) prior(path(p)[prop], v, nf);
+      });
+
+      return p;
+		};
+	},
+	multi_initial: function (prior, path) {
+		return function (p) {
+			return {};
+		};
+	}
+};
+
+module.exports = reductio_value;
+
 },{}]},{},[1])(1)
 });
