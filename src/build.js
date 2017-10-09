@@ -18,6 +18,7 @@ var reductio_alias_prop = require('./aliasProp.js');
 var reductio_data_list = require('./data-list.js');
 var reductio_custom = require('./custom.js');
 var reductio_value = require('./value.js');
+var reductio_any = require('./any.js');
 
 function build_function(p, f, path) {
 	// We have to build these functions in order. Eventually we can include dependency
@@ -155,6 +156,12 @@ function build_function(p, f, path) {
 		f.reduceAdd = reductio_sum_of_sq.add(p.sumOfSquares, f.reduceAdd, path);
 		f.reduceRemove = reductio_sum_of_sq.remove(p.sumOfSquares, f.reduceRemove, path);
 		f.reduceInitial = reductio_sum_of_sq.initial(f.reduceInitial, path);
+	}
+
+	if (p.any) {
+		f.reduceAdd = reductio_any.add(p.any, f.reduceAdd, path);
+		f.reduceRemove = reductio_any.remove(p.any, f.reduceRemove, path);
+		f.reduceInitial = reductio_any.initial(f.reduceInitial, path);
 	}
 
 	// Standard deviation

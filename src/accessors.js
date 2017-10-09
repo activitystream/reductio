@@ -10,7 +10,7 @@ _assign = function assign(target) {
 		var source = arguments[index];
 		if (source != null) {
 			for (var nextKey in source) {
-				if(source.hasOwnProperty(nextKey)) {
+				if (source.hasOwnProperty(nextKey)) {
 					output[nextKey] = source[nextKey];
 				}
 			}
@@ -28,10 +28,12 @@ function accessor_build(obj, p) {
 
 	// Converts a string to an accessor function
 	function accessorify(v) {
-		if( typeof v === 'string' ) {
+		if (typeof v === 'string') {
 			// Rewrite to a function
 			var tempValue = v;
-			var func = function (d) { return d[tempValue]; }
+			var func = function(d) {
+				return d[tempValue];
+			};
 			return func;
 		} else {
 			return v;
@@ -40,10 +42,12 @@ function accessor_build(obj, p) {
 
 	// Converts a string to an accessor function
 	function accessorifyNumeric(v) {
-		if( typeof v === 'string' ) {
+		if (typeof v === 'string') {
 			// Rewrite to a function
 			var tempValue = v;
-			var func = function (d) { return +d[tempValue]; }
+			var func = function(d) {
+				return +d[tempValue];
+			};
 			return func;
 		} else {
 			return v;
@@ -51,7 +55,7 @@ function accessor_build(obj, p) {
 	}
 
 	obj.fromObject = function(value) {
-		if(!arguments.length) return p;
+		if (!arguments.length) return p;
 		_assign(p, value);
 		return obj;
 	};
@@ -63,7 +67,9 @@ function accessor_build(obj, p) {
 	obj.count = function(value) {
 		if (!arguments.length) return p.count;
 		if (value === true) {
-			p.count = function(){ return 1; };
+			p.count = function() {
+				return 1;
+			};
 		} else if (value) {
 			p.count = accessorifyNumeric(value);
 		} else {
@@ -87,8 +93,8 @@ function accessor_build(obj, p) {
 		value = accessorifyNumeric(value);
 
 		// We can take an accessor function, a boolean, or a string
-		if( typeof value === 'function' ) {
-			if(p.sum && p.sum !== value) console.warn('SUM aggregation is being overwritten by AVG aggregation');
+		if (typeof value === 'function') {
+			if (p.sum && p.sum !== value) console.warn('SUM aggregation is being overwritten by AVG aggregation');
 			p.sum = value;
 			p.avg = true;
 			obj.count(true);
@@ -127,8 +133,9 @@ function accessor_build(obj, p) {
 
 		value = accessorifyNumeric(value);
 
-		if(typeof value === 'function') {
-			if(p.valueList && p.valueList !== value) console.warn('VALUELIST accessor is being overwritten by median aggregation');
+		if (typeof value === 'function') {
+			if (p.valueList && p.valueList !== value)
+				console.warn('VALUELIST accessor is being overwritten by median aggregation');
 			p.valueList = value;
 		}
 		p.median = value;
@@ -140,8 +147,9 @@ function accessor_build(obj, p) {
 
 		value = accessorifyNumeric(value);
 
-		if(typeof value === 'function') {
-			if(p.valueList && p.valueList !== value) console.warn('VALUELIST accessor is being overwritten by min aggregation');
+		if (typeof value === 'function') {
+			if (p.valueList && p.valueList !== value)
+				console.warn('VALUELIST accessor is being overwritten by min aggregation');
 			p.valueList = value;
 		}
 		p.min = value;
@@ -153,8 +161,9 @@ function accessor_build(obj, p) {
 
 		value = accessorifyNumeric(value);
 
-		if(typeof value === 'function') {
-			if(p.valueList && p.valueList !== value) console.warn('VALUELIST accessor is being overwritten by max aggregation');
+		if (typeof value === 'function') {
+			if (p.valueList && p.valueList !== value)
+				console.warn('VALUELIST accessor is being overwritten by max aggregation');
 			p.valueList = value;
 		}
 		p.max = value;
@@ -166,8 +175,9 @@ function accessor_build(obj, p) {
 
 		value = accessorify(value);
 
-		if( typeof value === 'function' ) {
-			if(p.exceptionAccessor && p.exceptionAccessor !== value) console.warn('EXCEPTION accessor is being overwritten by exception count aggregation');
+		if (typeof value === 'function') {
+			if (p.exceptionAccessor && p.exceptionAccessor !== value)
+				console.warn('EXCEPTION accessor is being overwritten by exception count aggregation');
 			p.exceptionAccessor = value;
 			p.exceptionCount = true;
 		} else {
@@ -205,7 +215,7 @@ function accessor_build(obj, p) {
 
 		value = accessorifyNumeric(value);
 
-		if(typeof(value) === 'function') {
+		if (typeof value === 'function') {
 			p.sumOfSquares = value;
 			p.sum = value;
 			obj.count(true);
@@ -235,17 +245,17 @@ function accessor_build(obj, p) {
 			}
 			return obj;
 		} else if (typeof value === 'string') {
-			if(!p.values) p.values = {};
+			if (!p.values) p.values = {};
 			p.values[value] = {};
 			p.values[value].parameters = reductio_parameters();
 			accessor_build(p.values[value], p.values[value].parameters);
-			if(accessor) p.values[value].accessor = accessor;
+			if (accessor) p.values[value].accessor = accessor;
 			return p.values[value];
 		}
 	};
 
 	obj.nest = function(keyAccessorArray) {
-		if(!arguments.length) return p.nestKeys;
+		if (!arguments.length) return p.nestKeys;
 
 		keyAccessorArray.map(accessorify);
 
@@ -254,19 +264,19 @@ function accessor_build(obj, p) {
 	};
 
 	obj.alias = function(propAccessorObj) {
-		if(!arguments.length) return p.aliasKeys;
+		if (!arguments.length) return p.aliasKeys;
 		p.aliasKeys = propAccessorObj;
 		return obj;
 	};
 
 	obj.aliasProp = function(propAccessorObj) {
-		if(!arguments.length) return p.aliasPropKeys;
+		if (!arguments.length) return p.aliasPropKeys;
 		p.aliasPropKeys = propAccessorObj;
 		return obj;
 	};
 
 	obj.groupAll = function(groupTest) {
-		if(!arguments.length) return p.groupAll;
+		if (!arguments.length) return p.groupAll;
 		p.groupAll = groupTest;
 		return obj;
 	};
@@ -283,10 +293,15 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
+	obj.any = function(any) {
+		if (!arguments.length) return p.any;
+		p.any = accessorify(any);
+		return obj;
+	};
 }
 
 var reductio_accessors = {
-	build: accessor_build
+	build: accessor_build,
 };
 
 module.exports = reductio_accessors;

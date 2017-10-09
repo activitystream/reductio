@@ -4,6 +4,7 @@ var reductio_parameters = function() {
 		avg: false,
 		count: false,
 		sum: false,
+		any: false,
 		exceptionAccessor: false,
 		exceptionCount: false,
 		exceptionSum: false,
@@ -22,7 +23,7 @@ var reductio_parameters = function() {
 		aliasPropKeys: false,
 		groupAll: false,
 		dataList: false,
-		custom: false
+		custom: false,
 	};
 };
 
