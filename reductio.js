@@ -448,7 +448,7 @@ var reductio_any = {
 	initial: function(prior, path) {
 		return function(p) {
 			p = prior(p);
-			p.any = '';
+			path(p).any = '';
 			return p;
 		};
 	},
@@ -543,8 +543,8 @@ function build_function(p, f, path) {
 			},
 		};
 		f.reduceInitial = reductio_value.initial(origF.reduceInitial, path);
-		f.reduceAdd = reductio_value.add(p.value, newF, path, p.multi_value);
-		f.reduceRemove = reductio_value.remove(p.value, newF, path, p.multi_value);
+		f.reduceAdd = reductio_value.add(p.value, newF, path, p.multi_value, origF.reduceAdd);
+		f.reduceRemove = reductio_value.remove(p.value, newF, path, p.multi_value, origF.reduceRemove);
 
 		f = newF;
 
@@ -1478,23 +1478,25 @@ module.exports = reductio_value_list;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],29:[function(require,module,exports){
 var reductio_value = {
-	add: function(a, prior, path, multi) {
-		if (multi) return reductio_value.multi_add(a, prior, path);
+	add: function(a, prior, path, multi, originalAdd) {
+		if (multi) return reductio_value.multi_add(a, prior, path, originalAdd);
 		return function(p, v, nf) {
+			if (originalAdd) originalAdd(p, v, nf);
 			var property = a(v);
 			if (!path(p)[property]) path(p)[property] = prior.reduceInitial();
-			if (prior.reduceAdd) {
+			if (prior && prior.reduceAdd) {
 				prior.reduceAdd(path(p)[property], v, nf);
 			}
 			return p;
 		};
 	},
-	remove: function(a, prior, path, multi) {
-		if (multi) return reductio_value.multi_remove(a, prior, path);
+	remove: function(a, prior, path, multi, originalRemove) {
+		if (multi) return reductio_value.multi_remove(a, prior, path, originalRemove);
 		return function(p, v, nf) {
+			if (originalRemove) originalRemove(p, v, nf);
 			var property = a(v);
-			if (prior) {
-				prior(path(p)[property], v, nf);
+			if (prior && prior.reduceRemove) {
+				prior.reduceRemove(path(p)[property], v, nf);
 			}
 			return p;
 		};
@@ -1505,8 +1507,9 @@ var reductio_value = {
 		};
 	},
 
-	multi_add: function(a, prior, path) {
+	multi_add: function(a, prior, path, originalAdd) {
 		return function(p, v, nf) {
+			if (originalAdd) originalAdd(p, v, nf);
 			var properties = a(v);
 			properties.forEach(function(prop) {
 				if (!path(p)[prop]) {
@@ -1518,8 +1521,9 @@ var reductio_value = {
 			return p;
 		};
 	},
-	multi_remove: function(a, prior, path) {
+	multi_remove: function(a, prior, path, originalRemove) {
 		return function(p, v, nf) {
+			if (originalRemove) originalRemove(p, v, nf);
 			var properties = a(v);
 			properties.forEach(function(prop) {
 				if (prior.reduceRemove) prior.reduceRemove(path(p)[prop], v, nf);

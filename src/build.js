@@ -50,8 +50,8 @@ function build_function(p, f, path) {
 			},
 		};
 		f.reduceInitial = reductio_value.initial(origF.reduceInitial, path);
-		f.reduceAdd = reductio_value.add(p.value, newF, path, p.multi_value);
-		f.reduceRemove = reductio_value.remove(p.value, newF, path, p.multi_value);
+		f.reduceAdd = reductio_value.add(p.value, newF, path, p.multi_value, origF.reduceAdd);
+		f.reduceRemove = reductio_value.remove(p.value, newF, path, p.multi_value, origF.reduceRemove);
 
 		f = newF;
 

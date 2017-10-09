@@ -15,7 +15,7 @@ var reductio_any = {
 	initial: function(prior, path) {
 		return function(p) {
 			p = prior(p);
-			p.any = '';
+			path(p).any = '';
 			return p;
 		};
 	},
