@@ -55,6 +55,7 @@ function build_function(p, f, path) {
       newF,
       path,
       p.multi_value,
+      p.filter,
       origF.reduceAdd
     );
     f.reduceRemove = reductio_value.remove(
@@ -62,6 +63,7 @@ function build_function(p, f, path) {
       newF,
       path,
       p.multi_value,
+      p.filter,
       origF.reduceRemove
     );
 
@@ -285,7 +287,7 @@ function build_function(p, f, path) {
 
   // Filters determine if our built-up priors should run, or if it should skip
   // back to the filters given at the beginning of this build function.
-  if (p.filter) {
+  if (p.filter && !p.value) {
     f.reduceAdd = reductio_filter.add(
       p.filter,
       f.reduceAdd,
