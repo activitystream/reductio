@@ -1,6 +1,6 @@
 function postProcess(reductio) {
     return function (group, p, f) {
-        group.post = function(){
+        group.post = function () {
             var postprocess = function () {
                 return postprocess.all();
             };

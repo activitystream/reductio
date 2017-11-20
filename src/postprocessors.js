@@ -1,6 +1,6 @@
-module.exports = function(reductio){
+module.exports = function (reductio) {
     reductio.postprocessors = {};
-    reductio.registerPostProcessor = function(name, func){
+    reductio.registerPostProcessor = function (name, func) {
         reductio.postprocessors[name] = func;
     };
 

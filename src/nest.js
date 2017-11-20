@@ -6,12 +6,12 @@ var reductio_nest = {
 		var arrRef;
 		var newRef;
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
+			if (prior) prior(p, v, nf);
 
 			arrRef = path(p).nest;
-			keyAccessors.forEach(function(a) {
-				newRef = arrRef.filter(function(d) { return d.key === a(v); })[0];
-				if(newRef) {
+			keyAccessors.forEach(function (a) {
+				newRef = arrRef.filter(function (d) { return d.key === a(v); })[0];
+				if (newRef) {
 					// There is another level.
 					arrRef = newRef.values;
 				} else {
@@ -23,7 +23,7 @@ var reductio_nest = {
 			});
 
 			arrRef.push(v);
-			
+
 			return p;
 		};
 	},
@@ -31,11 +31,11 @@ var reductio_nest = {
 		var arrRef;
 		var nextRef;
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
+			if (prior) prior(p, v, nf);
 
 			arrRef = path(p).nest;
-			keyAccessors.forEach(function(a) {
-				arrRef = arrRef.filter(function(d) { return d.key === a(v); })[0].values;
+			keyAccessors.forEach(function (a) {
+				arrRef = arrRef.filter(function (d) { return d.key === a(v); })[0].values;
 			});
 
 			// Array contains an actual reference to the row, so just splice it out.

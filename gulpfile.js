@@ -17,7 +17,7 @@ var testFiles = [
 	'test/**/*.spec.js',
 ];
 
-gulp.task('scripts', function() {
+gulp.task('scripts', function () {
 	return browserify('./src/reductio.js', { standalone: 'reductio' })
 		.transform(shim)
 		.bundle()
@@ -28,7 +28,7 @@ gulp.task('scripts', function() {
 		.pipe(gulp.dest('./'));
 });
 
-gulp.task('docs', function() {
+gulp.task('docs', function () {
 	// Set up gitdown
 	// Gitdown.notice = function () { return ''; };
 	// var gitdown = Gitdown.read('docs/README.md');
@@ -39,7 +39,7 @@ gulp.task('docs', function() {
 	// 	.write('README.md');
 });
 
-gulp.task('bump', function() {
+gulp.task('bump', function () {
 	gulp
 		.src(['./bower.json', './package.json'])
 		.pipe(bump({ type: 'minor' }))
@@ -47,36 +47,36 @@ gulp.task('bump', function() {
 });
 
 // Watch Files For Changes
-gulp.task('watch', function() {
+gulp.task('watch', function () {
 	gulp.watch('./src/**/*.js', ['scripts']);
 	gulp.watch('./docs/*', ['docs']);
 });
 
-gulp.task('test', function() {
+gulp.task('test', function () {
 	return gulp
 		.src(testFiles)
 		.pipe(
-			karma({
-				configFile: 'karma.conf.js',
-				action: 'run',
-			})
+		karma({
+			configFile: 'karma.conf.js',
+			action: 'run',
+		})
 		)
-		.on('error', function(err) {
+		.on('error', function (err) {
 			// Make sure failed tests cause gulp to exit non-zero
 			throw err;
 		});
 });
 
-gulp.task('testWatch', function() {
+gulp.task('testWatch', function () {
 	return gulp
 		.src(testFiles)
 		.pipe(
-			karma({
-				configFile: 'karma.conf.js',
-				action: 'watch',
-			})
+		karma({
+			configFile: 'karma.conf.js',
+			action: 'watch',
+		})
 		)
-		.on('error', function(err) {
+		.on('error', function (err) {
 			// Make sure failed tests cause gulp to exit non-zero
 			throw err;
 		});

@@ -1,4 +1,4 @@
-var reductio_parameters = function() {
+var reductio_parameters = function () {
 	return {
 		order: false,
 		avg: false,

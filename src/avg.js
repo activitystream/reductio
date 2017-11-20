@@ -1,8 +1,8 @@
 var reductio_avg = {
 	add: function (a, prior, path) {
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
-			if(path(p).count > 0) {
+			if (prior) prior(p, v, nf);
+			if (path(p).count > 0) {
 				path(p).avg = path(p).sum / path(p).count;
 			} else {
 				path(p).avg = 0;
@@ -12,8 +12,8 @@ var reductio_avg = {
 	},
 	remove: function (a, prior, path) {
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
-			if(path(p).count > 0) {
+			if (prior) prior(p, v, nf);
+			if (path(p).count > 0) {
 				path(p).avg = path(p).sum / path(p).count;
 			} else {
 				path(p).avg = 0;

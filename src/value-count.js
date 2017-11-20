@@ -4,11 +4,11 @@ var reductio_value_count = {
 	add: function (a, prior, path) {
 		var i, curr;
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
+			if (prior) prior(p, v, nf);
 			// Not sure if this is more efficient than sorting.
 			i = path(p).bisect(path(p).values, a(v), 0, path(p).values.length);
 			curr = path(p).values[i];
-			if(curr && curr[0] === a(v)) {
+			if (curr && curr[0] === a(v)) {
 				// Value already exists in the array - increment it
 				curr[1]++;
 			} else {
@@ -21,7 +21,7 @@ var reductio_value_count = {
 	remove: function (a, prior, path) {
 		var i;
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
+			if (prior) prior(p, v, nf);
 			i = path(p).bisect(path(p).values, a(v), 0, path(p).values.length);
 			// Value already exists or something has gone terribly wrong.
 			path(p).values[i][1]--;
@@ -33,7 +33,7 @@ var reductio_value_count = {
 			p = prior(p);
 			// Array[Array[value, count]]
 			path(p).values = [];
-			path(p).bisect = crossfilter.bisect.by(function(d) { return d[0]; }).left;
+			path(p).bisect = crossfilter.bisect.by(function (d) { return d[0]; }).left;
 			return p;
 		};
 	}

@@ -1,14 +1,14 @@
 var reductio_count = {
 	add: function (a, prior, path) {
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
+			if (prior) prior(p, v, nf);
 			path(p).count = path(p).count + a(v);
 			return p;
 		};
 	},
 	remove: function (a, prior, path) {
 		return function (p, v, nf) {
-			if(prior) prior(p, v, nf);
+			if (prior) prior(p, v, nf);
 			path(p).count = path(p).count - a(v);
 			return p;
 		};

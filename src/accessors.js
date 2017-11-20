@@ -31,7 +31,7 @@ function accessor_build(obj, p) {
 		if (typeof v === 'string') {
 			// Rewrite to a function
 			var tempValue = v;
-			var func = function(d) {
+			var func = function (d) {
 				return d[tempValue];
 			};
 			return func;
@@ -45,7 +45,7 @@ function accessor_build(obj, p) {
 		if (typeof v === 'string') {
 			// Rewrite to a function
 			var tempValue = v;
-			var func = function(d) {
+			var func = function (d) {
 				return +d[tempValue];
 			};
 			return func;
@@ -54,20 +54,20 @@ function accessor_build(obj, p) {
 		}
 	}
 
-	obj.fromObject = function(value) {
+	obj.fromObject = function (value) {
 		if (!arguments.length) return p;
 		_assign(p, value);
 		return obj;
 	};
 
-	obj.toObject = function() {
+	obj.toObject = function () {
 		return p;
 	};
 
-	obj.count = function(value) {
+	obj.count = function (value) {
 		if (!arguments.length) return p.count;
 		if (value === true) {
-			p.count = function() {
+			p.count = function () {
 				return 1;
 			};
 		} else if (value) {
@@ -78,7 +78,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.sum = function(value) {
+	obj.sum = function (value) {
 		if (!arguments.length) return p.sum;
 
 		value = accessorifyNumeric(value);
@@ -87,7 +87,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.avg = function(value) {
+	obj.avg = function (value) {
 		if (!arguments.length) return p.avg;
 
 		value = accessorifyNumeric(value);
@@ -104,7 +104,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.exception = function(value) {
+	obj.exception = function (value) {
 		if (!arguments.length) return p.exceptionAccessor;
 
 		value = accessorify(value);
@@ -113,13 +113,13 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.filter = function(value) {
+	obj.filter = function (value) {
 		if (!arguments.length) return p.filter;
 		p.filter = value;
 		return obj;
 	};
 
-	obj.valueList = function(value) {
+	obj.valueList = function (value) {
 		if (!arguments.length) return p.valueList;
 
 		value = accessorify(value);
@@ -128,7 +128,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.median = function(value) {
+	obj.median = function (value) {
 		if (!arguments.length) return p.median;
 
 		value = accessorifyNumeric(value);
@@ -142,7 +142,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.min = function(value) {
+	obj.min = function (value) {
 		if (!arguments.length) return p.min;
 
 		value = accessorifyNumeric(value);
@@ -156,7 +156,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.max = function(value) {
+	obj.max = function (value) {
 		if (!arguments.length) return p.max;
 
 		value = accessorifyNumeric(value);
@@ -170,7 +170,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.exceptionCount = function(value) {
+	obj.exceptionCount = function (value) {
 		if (!arguments.length) return p.exceptionCount;
 
 		value = accessorify(value);
@@ -186,7 +186,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.exceptionSum = function(value) {
+	obj.exceptionSum = function (value) {
 		if (!arguments.length) return p.exceptionSum;
 
 		value = accessorifyNumeric(value);
@@ -195,7 +195,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.histogramValue = function(value) {
+	obj.histogramValue = function (value) {
 		if (!arguments.length) return p.histogramValue;
 
 		value = accessorifyNumeric(value);
@@ -204,13 +204,13 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.histogramBins = function(value) {
+	obj.histogramBins = function (value) {
 		if (!arguments.length) return p.histogramThresholds;
 		p.histogramThresholds = value;
 		return obj;
 	};
 
-	obj.std = function(value) {
+	obj.std = function (value) {
 		if (!arguments.length) return p.std;
 
 		value = accessorifyNumeric(value);
@@ -226,7 +226,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.sumOfSq = function(value) {
+	obj.sumOfSq = function (value) {
 		if (!arguments.length) return p.sumOfSquares;
 
 		value = accessorifyNumeric(value);
@@ -235,7 +235,7 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.value = function(value, accessor) {
+	obj.value = function (value, accessor) {
 		if (!arguments.length) {
 			console.error("'value' requires an argument");
 		} else if (typeof value === 'function') {
@@ -254,7 +254,7 @@ function accessor_build(obj, p) {
 		}
 	};
 
-	obj.nest = function(keyAccessorArray) {
+	obj.nest = function (keyAccessorArray) {
 		if (!arguments.length) return p.nestKeys;
 
 		keyAccessorArray.map(accessorify);
@@ -263,37 +263,37 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
-	obj.alias = function(propAccessorObj) {
+	obj.alias = function (propAccessorObj) {
 		if (!arguments.length) return p.aliasKeys;
 		p.aliasKeys = propAccessorObj;
 		return obj;
 	};
 
-	obj.aliasProp = function(propAccessorObj) {
+	obj.aliasProp = function (propAccessorObj) {
 		if (!arguments.length) return p.aliasPropKeys;
 		p.aliasPropKeys = propAccessorObj;
 		return obj;
 	};
 
-	obj.groupAll = function(groupTest) {
+	obj.groupAll = function (groupTest) {
 		if (!arguments.length) return p.groupAll;
 		p.groupAll = groupTest;
 		return obj;
 	};
 
-	obj.dataList = function(value) {
+	obj.dataList = function (value) {
 		if (!arguments.length) return p.dataList;
 		p.dataList = value;
 		return obj;
 	};
 
-	obj.custom = function(addRemoveInitialObj) {
+	obj.custom = function (addRemoveInitialObj) {
 		if (!arguments.length) return p.custom;
 		p.custom = addRemoveInitialObj;
 		return obj;
 	};
 
-	obj.any = function(any) {
+	obj.any = function (any) {
 		if (!arguments.length) return p.any;
 		p.any = accessorify(any);
 		return obj;
